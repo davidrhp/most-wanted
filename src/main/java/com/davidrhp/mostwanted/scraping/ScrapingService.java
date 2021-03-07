@@ -5,6 +5,8 @@ import com.davidrhp.mostwanted.scraping.dto.TechnologyDto;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -14,6 +16,8 @@ import java.util.regex.Pattern;
 
 @Service
 public class ScrapingService {
+
+    public static final Logger LOG = LoggerFactory.getLogger(ScrapingService.class);
 
     public static final String BASE_URL = "https://de.indeed.com/Jobs";
     public static final String JOB_COUNT_ID = "searchCountPages";
@@ -35,12 +39,15 @@ public class ScrapingService {
     private TechnologyDto getTechnologyDto(String query, String location) {
         String urlParams = String.format("?q=%s&l=%s", query, location);
 
+        LOG.debug(String.format("Making request to %s", BASE_URL + urlParams));
         Document doc;
         try {
             doc = Jsoup.connect(BASE_URL + urlParams).get();
         } catch (IOException e) {
+            LOG.error("Web request failed.", e);
             return null;
         }
+        LOG.debug("Request completed:\n" + doc);
 
         String elementText = doc.getElementById(JOB_COUNT_ID).text();
 

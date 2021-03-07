@@ -1,0 +1,9 @@
+services:
+
+  backend:
+    ports:
+      - 8080:8080  # HOST:CONTAINER
+
+networks:
+  traefik-public:
+    external: false
